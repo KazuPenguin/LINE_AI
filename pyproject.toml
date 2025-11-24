@@ -1,0 +1,21 @@
+[project]
+name = "line-ai-trend-bot"
+version = "1.0.0"
+description = "AI trend collection and summary bot for LINE"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "AI Trend Bot" }
+]
+
+dependencies = [
+    "arxiv>=2.1.0",
+    "ddgs>=0.2.0",
+    "openai>=1.54.0",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+]
+
+# This is an application, not a library, so no build system is needed
+# uv will still manage dependencies correctly
