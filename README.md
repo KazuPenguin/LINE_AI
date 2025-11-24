@@ -225,6 +225,13 @@ git push -u origin main
 
 ### 3. GitHub Secretsの設定（重要）
 
+GitHub Actionsで自動実行する際、環境変数は`.env`ファイルではなく、**GitHub Secrets**から読み込まれます。
+
+**環境変数の仕組み:**
+- **ローカル開発**: `.env`ファイルから読み込み
+- **GitHub Actions**: GitHub Secretsから直接環境変数として設定
+- どちらの環境でも同じコードが動作します
+
 **手順:**
 1. GitHubのリポジトリページを開く
 2. 「Settings」タブをクリック（リポジトリ名の下にあるタブ）
@@ -235,23 +242,33 @@ git push -u origin main
 **以下の3つのSecretを追加:**
 
 #### Secret 1: OPENAI_API_KEY
-- Name: `OPENAI_API_KEY`
+- Name: `OPENAI_API_KEY`（大文字小文字を正確に）
 - Secret: OpenAIで取得した`sk-proj-...`で始まるキー
 - 「Add secret」をクリック
 
 #### Secret 2: LINE_CHANNEL_ACCESS_TOKEN
-- Name: `LINE_CHANNEL_ACCESS_TOKEN`
+- Name: `LINE_CHANNEL_ACCESS_TOKEN`（大文字小文字を正確に）
 - Secret: LINE Developersで取得した長いトークン（約170文字）
 - 「Add secret」をクリック
 
 #### Secret 3: LINE_USER_ID
-- Name: `LINE_USER_ID`
+- Name: `LINE_USER_ID`（大文字小文字を正確に）
 - Secret: `U`で始まる33文字のUser ID
 - 「Add secret」をクリック
 
-**確認:**
-- 3つのSecretが正しく登録されているか確認
+**重要:**
+- Secret名は大文字小文字を区別します
+- `.env`ファイルと全く同じ名前にしてください
 - Secretの値は登録後は見えなくなります（セキュリティのため）
+- GitHub Actionsの実行ログにも値は表示されません（マスクされます）
+
+**確認:**
+```
+✓ OPENAI_API_KEY
+✓ LINE_CHANNEL_ACCESS_TOKEN
+✓ LINE_USER_ID
+```
+上記3つが表示されていればOK
 
 ### 4. GitHub Actionsの有効化
 
@@ -273,8 +290,11 @@ git push -u origin main
 
 **エラーが出た場合:**
 - ワークフローをクリックして詳細ログを確認
-- Secretsが正しく設定されているか再確認
-- 環境変数名のスペルミスがないか確認
+- 「📄 環境変数は既に設定されています（CI環境）」と表示されるか確認
+- 「❌ 必須の環境変数が設定されていません」が出た場合:
+  - Secretsが正しく設定されているか再確認
+  - Secret名が大文字小文字含めて正確か確認（`LINE_USER_ID` ≠ `LINE_USERID`）
+  - Secretの値にスペースや改行が入っていないか確認
 
 ### 6. 自動実行スケジュール
 
@@ -412,6 +432,11 @@ LINE_AI/
 - Secretの名前は大文字小文字を区別します
 - `LINE_USER_ID`と`LINE_USERID`は別物です
 - スペルミスがないか再確認
+- GitHubの`Settings` → `Secrets and variables` → `Actions`で確認
+
+**原因5: Secretの値にスペースや改行が含まれている**
+- Secret登録時に余分なスペースや改行をコピーしていないか確認
+- 値を再登録してみる
 
 ### Q: OpenAI APIエラーが出る
 - API Keyが有効か確認

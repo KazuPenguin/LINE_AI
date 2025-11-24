@@ -31,6 +31,27 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
+      - name: Check environment variables
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
+        run: |
+          echo "Checking required environment variables..."
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "❌ OPENAI_API_KEY is not set"
+            exit 1
+          fi
+          if [ -z "$LINE_CHANNEL_ACCESS_TOKEN" ]; then
+            echo "❌ LINE_CHANNEL_ACCESS_TOKEN is not set"
+            exit 1
+          fi
+          if [ -z "$LINE_USER_ID" ]; then
+            echo "❌ LINE_USER_ID is not set"
+            exit 1
+          fi
+          echo "✅ All required environment variables are set"
+
       - name: Run AI Trend Bot
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

@@ -27,7 +27,14 @@ def main():
     print()
 
     # 環境変数の読み込み
-    load_dotenv()
+    # .envファイルが存在する場合のみ読み込み（ローカル開発用）
+    # GitHub Actions等のCI環境では、Secretsから直接環境変数が設定される
+    env_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+    if os.path.exists(env_file):
+        print("📄 .envファイルから環境変数を読み込みます")
+        load_dotenv(env_file)
+    else:
+        print("📄 環境変数は既に設定されています（CI環境）")
 
     # 環境変数のチェック
     required_vars = [
@@ -40,6 +47,8 @@ def main():
     if missing_vars:
         error_msg = f"必須の環境変数が設定されていません: {', '.join(missing_vars)}"
         print(f"❌ {error_msg}")
+        print(f"💡 ローカル環境: .envファイルを作成してください")
+        print(f"💡 GitHub Actions: Secretsが正しく設定されているか確認してください")
         sys.exit(1)
 
     try:
